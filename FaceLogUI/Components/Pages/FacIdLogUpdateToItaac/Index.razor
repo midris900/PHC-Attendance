@@ -1,0 +1,121 @@
+@* @page "/face-id-log-update-to-itaac" *@
+@page "/"
+@using Domain.AttendanceServiceRespDTO
+
+<PageTitle>Face Attendance Logs</PageTitle>
+
+<RadzenStack Gap=".25rem" class="rz-mb-4">
+    <RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" class="rz-m-0">Attendance Logs</RadzenText>
+    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-secondary rz-m-0">
+        Find attendance records by CPR or cost center and date range.
+    </RadzenText>
+</RadzenStack>
+
+<RadzenCard Variant="Variant.Outlined" class="rz-mb-4">
+<RadzenTemplateForm TItem="SearchModel" Data="@search" Submit="@SearchAsync">
+    <RadzenStack Gap="1rem">
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="Cost center" Style="width: 100%">
+                    <RadzenTextBox @bind-Value="search.CostCenter" Name="CostCenter" Style="width: 100%" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="CPR number" Style="width: 100%">
+                    <RadzenTextBox @bind-Value="search.Cpr" Name="Cpr" Style="width: 100%" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="From date" Style="width: 100%">
+                    <RadzenDatePicker @bind-Value="search.FromDate" Name="FromDate" DateFormat="dd-MM-yyyy" Style="width: 100%" />
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="FromDate" Text="From date is required." />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="To date" Style="width: 100%">
+                    <RadzenDatePicker @bind-Value="search.ToDate" Name="ToDate" DateFormat="dd-MM-yyyy" Style="width: 100%" />
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="ToDate" Text="To date is required." />
+            </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Search" Icon="search" Disabled="isLoading" Style="width: 8rem" />
+                </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenTemplateForm>
+</RadzenCard>
+
+<RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Visible="isLoading" class="rz-my-4" />
+
+@* <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-mt-4">Face ID logs</RadzenText> *@
+<RadzenDataGrid TItem="AccessLogDTO" Data="logs" AllowPaging="true" PageSize="10" Density="Density.Compact"
+                AllowSorting="true" EmptyText="No attendance logs found." class="rz-mt-4">
+    <Columns>
+        <RadzenDataGridColumn TItem="AccessLogDTO" Title="Select" Width="80px" Sortable="false" Filterable="false">
+            <Template Context="log">
+                <RadzenCheckBox TValue="bool" Value="@selected.Contains(log)" Disabled="@log.ItaacUpdated"
+                                Change="@(value => SetSelected(log, value))" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="AccessLogDTO" Property="EmpId" Title="CPR" />
+@*         <RadzenDataGridColumn TItem="AccessLogDTO" Property="AccessDateTime" Title="Access date/time" 
+        FormatString="{0:dd-MM-yyyy HH:mm:ss}" /> *@
+        <RadzenDataGridColumn TItem="AccessLogDTO" Property="AccessDate" Title="Access date" 
+            FormatString="{0:dd-MM-yyyy}" />
+        <RadzenDataGridColumn TItem="AccessLogDTO" Property="AccessTime" Title="Access time" />
+        <RadzenDataGridColumn TItem="AccessLogDTO" Title="ITAAC flag" Sortable="false">
+            <Template Context="log">
+                <RadzenBadge Text="@(log.ItaacUpdated ? "Updated" : "Not updated")"
+                             BadgeStyle="@(log.ItaacUpdated ? BadgeStyle.Success : BadgeStyle.Danger)" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="AccessLogDTO" Property="DevName" Title="Device name" />
+@*         <RadzenDataGridColumn TItem="AccessLogDTO" Property="DevSn" Title="Device serial" /> *@
+        <RadzenDataGridColumn TItem="AccessLogDTO" Property="EmpFirstName" Title="Employee name" />
+@*         <RadzenDataGridColumn TItem="AccessLogDTO" Property="EmpLastName" Title="Last name" /> *@
+    </Columns>
+</RadzenDataGrid>
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" class="rz-mt-3">
+    <RadzenText TextStyle="TextStyle.Body2" class="rz-color-secondary rz-my-auto">
+        @(selected.Count > 0
+            ? $"{selected.Count} selected record(s) will be pushed."
+            : "No records selected; all not updated records will be pushed.")
+    </RadzenText>
+    <RadzenButton Text="Push Face ID logs" Icon="upload" Click="@PushFaceLogsToItaacAsync"
+                  Disabled="@(isLoading || !logs.Any(log => !log.ItaacUpdated))" />
+</RadzenStack>
+
+@* <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-mt-5">Biostar logs</RadzenText>
+<RadzenDataGrid TItem="BiostarLogDTO" Data="biostarLogs" AllowPaging="true" PageSize="10"
+                Density="Density.Compact" AllowSorting="true" EmptyText="No Biostar logs found." class="rz-mt-2">
+    <Columns>
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Title="Select" Width="80px" Sortable="false" Filterable="false">
+            <Template Context="log">
+                <RadzenCheckBox TValue="bool" Value="@selectedBiostar.Contains(log)" Disabled="@log.ItaacUpdated"
+                                Change="@(value => SetBiostarSelected(log, value))" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Property="Cpr" Title="CPR" />
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Property="AttendanceDate" Title="Attendance date"
+                              FormatString="{0:dd-MM-yyyy}" />
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Property="AttendanceTime" Title="Attendance time" />
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Title="ITAAC flag" Sortable="false">
+            <Template Context="log">
+                <RadzenBadge Text="@(log.ItaacUpdated ? "Updated" : "Not updated")"
+                             BadgeStyle="@(log.ItaacUpdated ? BadgeStyle.Success : BadgeStyle.Danger)" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BiostarLogDTO" Property="DeviceName" Title="Device name" />
+    </Columns>
+</RadzenDataGrid>
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" class="rz-mt-3">
+    <RadzenText TextStyle="TextStyle.Body2" class="rz-color-secondary rz-my-auto">
+        @(selectedBiostar.Count > 0
+            ? $"{selectedBiostar.Count} selected record(s) will be pushed."
+            : "No records selected; all not updated records will be pushed.")
+    </RadzenText>
+    <RadzenButton Text="Push Biostar logs" Icon="upload" Click="@PushBiostarLogsToItaacAsync"
+                  Disabled="@(isLoading || !biostarLogs.Any(log => !log.ItaacUpdated))" />
+</RadzenStack> *@

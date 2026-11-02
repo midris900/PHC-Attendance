@@ -37,6 +37,8 @@ namespace Domain.Core
 
         //public static string ConnectionStringITAAC = "(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = orac.cor2awkipd5v.me-south-1.rds.amazonaws.com)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = orac)))";
         public static string ConnectionStringITAAC = "Data Source = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = orac-ir.cnr6xmhgotrc.eu-west-1.rds.amazonaws.com)(PORT = 1521))(CONNECT_DATA = (SERVICE_NAME = orac))); Persist Security Info=True;User Id = ITAAC_USER; Password=ITAAC_USER";
+        public static string ConnectionStringGH = "Data Source = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = gh-app-test-db.cqalzfplcslt.eu-west-1.rds.amazonaws.com)(PORT = 1521))(CONNECT_DATA = (SERVICE_NAME = GHORADB))); Persist Security Info=True;User Id = PHC_ITAAC_USER; Password=phcUSER@2026";
+
 
         public const string MESSAGE_TYPE_SUCCESS = "SUCCESS";
         public const string MESSAGE_TYPE_WARNING = "WARNING";

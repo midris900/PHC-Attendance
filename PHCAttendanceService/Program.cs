@@ -1,6 +1,7 @@
 using DataAccess.Repository;
 using Domain.CSBImportModels;
 using PHCAttendanceService.Profiles;
+using PHCAttendanceService.Services;
 using PHCAttendanceService.Services.AttendanceService;
 using PHCAttendanceService.Services.CSBImportServices;
 //using PHCAttendanceService.Services.CSBLeave;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<CsbHealthEmpDataService>();
 builder.Services.AddScoped<HealthEmpAttendanceService>();
 builder.Services.AddScoped<AccessLogService>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<GHAttendaceService>();
 builder.Services.AddScoped<PatternService>();
 //builder.Services.AddScoped<CsbLeaveService>();
 

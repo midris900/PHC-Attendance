@@ -109,9 +109,14 @@ namespace DataAccess.Repository
                 INSERT INTO TBL_ATTENDANCE_DATA_LOG_PHC
                     (ID, EMP_ID, ACCESS_DATE_TIME, ACCESS_DATE, ACCESS_TIME,
                      DEV_NAME, DEV_SN, EMP_FIRST_NAME, EMP_LAST_NAME)
-                VALUES
-                    (:Id, :EmpId, :AccessDateTime, :AccessDate, :AccessTime,
-                     :DevName, :DevSn, :EmpFirstName, :EmpLastName)";
+                SELECT :Id, :EmpId, :AccessDateTime, :AccessDate, :AccessTime,
+                       :DevName, :DevSn, :EmpFirstName, :EmpLastName
+                FROM DUAL
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM TBL_ATTENDANCE_DATA_LOG_PHC
+                    WHERE ID = :Id
+                )";
 
             await using var connection = new OracleConnection(ConfigClass.ConnectionStringGH);
             await connection.OpenAsync();

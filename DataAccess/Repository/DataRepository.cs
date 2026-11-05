@@ -97,7 +97,7 @@ namespace DataAccess.Repository
             }).ToList();
         }
 
-        public async Task<int> InsertGHAttendanceLogs(List<TblAttendanceDataLogPhc> attendanceLogs)
+        public async Task<List<TblAttendanceDataLogPhc>> InsertGHAttendanceLogs(List<TblAttendanceDataLogPhc> attendanceLogs)
         {
             ArgumentNullException.ThrowIfNull(attendanceLogs);
             if (attendanceLogs.Count == 0 || attendanceLogs.Any(log => log == null))
@@ -123,9 +123,17 @@ namespace DataAccess.Repository
             await using var transaction = connection.BeginTransaction();
             try
             {
-                var rowsInserted = await connection.ExecuteAsync(sql, attendanceLogs, transaction);
+                var insertedLogs = new List<TblAttendanceDataLogPhc>();
+                foreach (var log in attendanceLogs)
+                {
+                    var rowsInserted = await connection.ExecuteAsync(sql, log, transaction);
+                    if (rowsInserted > 0)
+                    {
+                        insertedLogs.Add(log);
+                    }
+                }
                 await transaction.CommitAsync();
-                return rowsInserted;
+                return insertedLogs;
             }
             catch
             {

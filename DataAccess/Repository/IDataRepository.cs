@@ -15,7 +15,7 @@ namespace DataAccess.Repository
     public interface IDataRepository : IDisposable
     {
         Task<List<TblAttendanceDataReqphc>> GetGHAttendanceRequests(DateTime date);
-        Task<int> InsertGHAttendanceLogs(List<TblAttendanceDataLogPhc> attendanceLogs);
+        Task<List<TblAttendanceDataLogPhc>> InsertGHAttendanceLogs(List<TblAttendanceDataLogPhc> attendanceLogs);
         Task<List<HikProAccessLog>> GetHikProAccessLogsByCprsAndDate(IReadOnlyCollection<string> cprs, DateTime date);
         Task<List<AttendanceLogDTO>> GetHikLogByCpr(string Cpr, string FromDate, string ToDate);
         Task<List<AccessLogDTO>> GetAccessLogsByCprs(IReadOnlyCollection<string> Cprs, string FromDate, string ToDate);

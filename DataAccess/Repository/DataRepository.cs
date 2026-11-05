@@ -97,6 +97,38 @@ namespace DataAccess.Repository
             }).ToList();
         }
 
+        public async Task<int> InsertGHAttendanceLogs(List<TblAttendanceDataLogPhc> attendanceLogs)
+        {
+            ArgumentNullException.ThrowIfNull(attendanceLogs);
+            if (attendanceLogs.Count == 0 || attendanceLogs.Any(log => log == null))
+            {
+                throw new ArgumentException("At least one valid attendance log is required.", nameof(attendanceLogs));
+            }
+
+            const string sql = @"
+                INSERT INTO TBL_ATTENDANCE_DATA_LOG_PHC
+                    (ID, EMP_ID, ACCESS_DATE_TIME, ACCESS_DATE, ACCESS_TIME,
+                     DEV_NAME, DEV_SN, EMP_FIRST_NAME, EMP_LAST_NAME)
+                VALUES
+                    (:Id, :EmpId, :AccessDateTime, :AccessDate, :AccessTime,
+                     :DevName, :DevSn, :EmpFirstName, :EmpLastName)";
+
+            await using var connection = new OracleConnection(ConfigClass.ConnectionStringGH);
+            await connection.OpenAsync();
+            await using var transaction = connection.BeginTransaction();
+            try
+            {
+                var rowsInserted = await connection.ExecuteAsync(sql, attendanceLogs, transaction);
+                await transaction.CommitAsync();
+                return rowsInserted;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
         public void Dispose()
         {
             //throw new NotImplementedException();

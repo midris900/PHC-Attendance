@@ -6,6 +6,9 @@ namespace Domain.GHOracleModel;
 [Table("TBL_ATTENDANCE_DATA_LOG_PHC")]
 public class TblAttendanceDataLogPhc
 {
+    [Column("ID", TypeName = "NUMBER")]
+    public decimal Id { get; set; }
+
     [MaxLength(32), Column("EMP_ID", TypeName = "VARCHAR2(32)")]
     public string? EmpId { get; set; }
 

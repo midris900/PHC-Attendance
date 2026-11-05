@@ -1,6 +1,7 @@
 ﻿using Domain.AttendanceServiceRespDTO;
 using Domain.CSBOracleModel;
 using Domain.GHOracleModel;
+using Domain.HikProModels;
 using Domain.ItaacDTO;
 using Domain.ITAACOracleModel;
 using System;
@@ -14,6 +15,7 @@ namespace DataAccess.Repository
     public interface IDataRepository : IDisposable
     {
         Task<List<TblAttendanceDataReqphc>> GetGHAttendanceRequests(DateTime date);
+        Task<List<HikProAccessLog>> GetHikProAccessLogsByCprsAndDate(IReadOnlyCollection<string> cprs, DateTime date);
         Task<List<AttendanceLogDTO>> GetHikLogByCpr(string Cpr, string FromDate, string ToDate);
         Task<List<AccessLogDTO>> GetAccessLogsByCprs(IReadOnlyCollection<string> Cprs, string FromDate, string ToDate);
         Task<List<HikProAccessLogDTO>> GetHikProAccessLogs(HikProAccessLogRequestDTO request);

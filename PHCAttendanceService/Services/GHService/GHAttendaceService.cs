@@ -94,12 +94,13 @@ public class GHAttendaceService
                 log, new ValidationContext(log), new List<ValidationResult>(), validateAllProperties: true)))
                 return InsertError(ConfigClass.INVALID_REQUEST, ConfigClass.INVALID_REQUEST_MESSAGE);
 
-            await _repository.InsertGHAttendanceLogs(attendanceLogs);
+            var insertedLogs = await _repository.InsertGHAttendanceLogs(attendanceLogs);
             return new TblAttendanceDataLogPhcRespDTO
             {
                 RESPONSE_CODE = ConfigClass.SUCCESS,
                 RESPONSE_DESCRPTION = ConfigClass.SUCCESS_MESSAGE,
-                lstData = attendanceLogs
+                RowsInserted = insertedLogs.Count,
+                lstData = insertedLogs
             };
         }
         catch (Exception)

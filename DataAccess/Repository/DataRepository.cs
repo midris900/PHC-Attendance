@@ -3,6 +3,7 @@ using DataAccess.DbAccess;
 using Domain.AttendanceServiceRespDTO;
 using Domain.Core;
 using Domain.CSBOracleModel;
+using Domain.GHOracleModel;
 using Domain.ItaacDTO;
 using Domain.ITAACOracleModel;
 using Npgsql;
@@ -23,6 +24,25 @@ namespace DataAccess.Repository
     {
         private static readonly string[] SupportedDateFormats = ["yyyy-MM-dd", "dd-MM-yyyy"];
         private SqlDataAccess db = new SqlDataAccess();
+
+        public async Task<List<TblAttendanceDataReqphc>> GetGHAttendanceRequests(DateTime date)
+        {
+            const string sql = @"
+                SELECT TADR_CPR AS TadrCpr,
+                       TADR_INSERT_DATE AS TadrInsertDate,
+                       TADR_INSERT_BY AS TadrInsertBy,
+                       TADR_FROM_DATE AS TadrFromDate,
+                       TADR_TO_DATE AS TadrToDate
+                FROM TBL_ATTENDANCE_DATA_REQPHC
+                WHERE :AttendanceDate BETWEEN TADR_FROM_DATE AND TADR_TO_DATE";
+
+            using IDbConnection connection = new OracleConnection(ConfigClass.ConnectionStringGH);
+            var results = await connection.QueryAsync<TblAttendanceDataReqphc>(sql, new
+            {
+                AttendanceDate = date
+            });
+            return results.ToList();
+        }
 
         public void Dispose()
         {

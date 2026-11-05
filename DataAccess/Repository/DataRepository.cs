@@ -4,6 +4,7 @@ using Domain.AttendanceServiceRespDTO;
 using Domain.Core;
 using Domain.CSBOracleModel;
 using Domain.GHOracleModel;
+using Domain.HikProModels;
 using Domain.ItaacDTO;
 using Domain.ITAACOracleModel;
 using Npgsql;
@@ -42,6 +43,58 @@ namespace DataAccess.Repository
                 AttendanceDate = date
             });
             return results.ToList();
+        }
+
+        public async Task<List<HikProAccessLog>> GetHikProAccessLogsByCprsAndDate(
+            IReadOnlyCollection<string> cprs, DateTime date)
+        {
+            ArgumentNullException.ThrowIfNull(cprs);
+            if (cprs.Count == 0)
+            {
+                return [];
+            }
+
+            const string sql = @"
+                SELECT ""LOG_ID"" AS LogId,
+                       ""EMP_ID"" AS EmpId,
+                       ""ACCESS_DATE_TIME"" AS AccessDateTime,
+                       ""ACCESS_DATE""::timestamp AS AccessDate,
+                       (""ACCESS_TIME"" - TIME '00:00:00') AS AccessTime,
+                       ""DEV_NAME"" AS DevName,
+                       ""DEV_SN"" AS DevSn,
+                       ""EMP_FIRST_NAME"" AS EmpFirstName,
+                       ""EMP_LAST_NAME"" AS EmpLastName,
+                       ""RECORD_CREATED_DATE"" AS RecordCreatedDate,
+                       ""IS_PROCESSED"" AS IsProcessed
+                FROM public.access_logs_to_integrate
+                WHERE ""EMP_ID"" = ANY(@Cprs)
+                  AND ""ACCESS_DATE"" = @AttendanceDate
+                ORDER BY ""LOG_ID"" ASC;";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Cprs", cprs.ToArray());
+            parameters.Add("AttendanceDate", date.Date, DbType.Date);
+
+            using IDbConnection connection = new NpgsqlConnection(ConfigClass.HikConnectionString);
+            var results = await connection.QueryAsync<PostgresHikProAccessLogRow>(sql, parameters);
+            return results.Select(row => new HikProAccessLog
+            {
+                LogId = row.LogId,
+                EmpId = row.EmpId,
+                AccessDateTime = row.AccessDateTime,
+                AccessDate = row.AccessDate.HasValue
+                    ? DateOnly.FromDateTime(row.AccessDate.Value)
+                    : null,
+                AccessTime = row.AccessTime.HasValue
+                    ? TimeOnly.FromTimeSpan(row.AccessTime.Value)
+                    : null,
+                DevName = row.DevName,
+                DevSn = row.DevSn,
+                EmpFirstName = row.EmpFirstName,
+                EmpLastName = row.EmpLastName,
+                RecordCreatedDate = row.RecordCreatedDate,
+                IsProcessed = row.IsProcessed
+            }).ToList();
         }
 
         public void Dispose()

@@ -1,7 +1,7 @@
 using Domain.GHOracleDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using PHCAttendanceService.Services;
+using PHCAttendanceService.GHService;
 
 namespace PHCAttendanceService.Controllers;
 
@@ -16,4 +16,9 @@ public class GHAttendaceController : ControllerBase
     [HttpGet]
     public Task<TblAttendanceDataReqphcRespDTO> GetGHAttendanceRequests([FromQuery, BindRequired] DateTime date) =>
         _service.GetGHAttendanceRequests(date);
+
+    [HttpPost("hikpro")]
+    public Task<GHAttendanceAccessLogRespDTO> GetHikProAccessLogsByCprsAndDate(
+        [FromBody] GHAttendanceAccessLogRequestDTO request) =>
+        _service.GetHikProAccessLogsByCprsAndDate(request);
 }

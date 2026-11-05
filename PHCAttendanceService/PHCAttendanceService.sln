@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceLogUI", "..\FaceLogUI\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHCAttendanceConsole", "..\PHCAttendanceConsole\PHCAttendanceConsole.csproj", "{47936C3D-C675-42EB-8895-46C93FA2AB95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHAttendanceConsole", "..\GHAttendanceConsole\GHAttendanceConsole.csproj", "{C280CBDD-2262-4677-8637-2F59C08495B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{47936C3D-C675-42EB-8895-46C93FA2AB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47936C3D-C675-42EB-8895-46C93FA2AB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47936C3D-C675-42EB-8895-46C93FA2AB95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C280CBDD-2262-4677-8637-2F59C08495B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C280CBDD-2262-4677-8637-2F59C08495B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C280CBDD-2262-4677-8637-2F59C08495B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C280CBDD-2262-4677-8637-2F59C08495B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
